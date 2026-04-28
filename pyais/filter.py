@@ -49,7 +49,7 @@ def is_in_grid(lat: float, lon: float, lat_min: float, lon_min: float, lat_max: 
     Returns:
     bool: True if the point is within the grid, False otherwise.
     """
-    return lat_min <= lat <= lat_max and lon_min <= lon <= lon_max
+    pass
 
 
 class Filter:
@@ -67,7 +67,7 @@ class Filter:
         Parameters:
         filter (Filter): The next filter to set.
         """
-        self.next_filter = filter
+        pass
 
     def filter(self, data: MESSAGE_STREAM) -> MESSAGE_STREAM:
         """
@@ -79,10 +79,7 @@ class Filter:
         Returns:
         MESSAGE_STREAM: The filtered data stream.
         """
-        data = self.filter_data(data)
-        if self.next_filter:
-            return self.next_filter.filter(data)
-        return data
+        pass
 
     def filter_data(self, data: MESSAGE_STREAM) -> MESSAGE_STREAM:
         """
@@ -122,7 +119,7 @@ class AttributeFilter(Filter):
         Yields:
         MESSAGE_STREAM: The filtered data stream.
         """
-        yield from filter(self.ff, data)
+        pass
 
 
 class NoneFilter(Filter):
@@ -150,9 +147,7 @@ class NoneFilter(Filter):
         Yields:
         MESSAGE_STREAM: The filtered data stream.
         """
-        for msg in data:
-            if all(getattr(msg, attr, None) is not None for attr in self.attrs):
-                yield msg
+        pass
 
 
 class MessageTypeFilter(Filter):
@@ -180,10 +175,7 @@ class MessageTypeFilter(Filter):
         Yields:
         MESSAGE_STREAM: The filtered data stream.
         """
-        for msg in data:
-            if msg.msg_type not in self.types:
-                continue
-            yield msg
+        pass
 
 
 class DistanceFilter(Filter):
@@ -213,11 +205,7 @@ class DistanceFilter(Filter):
         Yields:
         MESSAGE_STREAM: The filtered data stream.
         """
-        for msg in data:
-            if hasattr(msg, 'lat'):
-                if haversine(self.ref_lat_lon, (msg.lat, msg.lon)) >= self.distance_km:  # type: ignore
-                    continue
-            yield msg
+        pass
 
 
 class GridFilter(Filter):
@@ -248,11 +236,7 @@ class GridFilter(Filter):
         Yields:
         MESSAGE_STREAM: The filtered data stream.
         """
-        for msg in data:
-            if hasattr(msg, 'lat'):
-                if not is_in_grid(msg.lat, msg.lon, self.lat_min, self.lon_min, self.lat_max, self.lon_max):  # type: ignore
-                    continue
-            yield msg
+        pass
 
 
 class FilterChain:
@@ -287,4 +271,4 @@ class FilterChain:
         Yields:
         AIS_STREAM: The filtered data stream.
         """
-        yield from self.start.filter(x.decode() for x in stream)
+        pass

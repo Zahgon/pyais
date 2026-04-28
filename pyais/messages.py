@@ -73,9 +73,7 @@ class AISJSONEncoder(json.JSONEncoder):
     """Custom JSON encoder to handle bytes objects"""
 
     def default(self, o: typing.Any) -> typing.Any:
-        if isinstance(o, bytes):
-            return b64encode_str(o)
-        return json.JSONEncoder.default(self, o)
+        pass
 
 
 class NMEASentenceFactory:
@@ -148,13 +146,7 @@ class NMEASentenceFactory:
 
 def error_if_uninitialized(func: typing.Callable[['TagBlock'], typing.Any]) -> typing.Callable[['TagBlock'], typing.Any]:
     @functools.wraps(func)
-    def wrapper(tb: 'TagBlock') -> typing.Any:
-        if not tb.initialized:
-            raise TagBlockNotInitializedException(
-                'tag block not initialized. you need to call .init() first'
-            )
-        return func(tb)
-    return wrapper
+    pass
 
 
 class TagBlockGroup:
@@ -191,7 +183,7 @@ class TagBlockGroup:
     @property
     def is_fragmented(self) -> bool:
         """Returns whether or not this group expects several parts."""
-        return self.sentence_tot > 1
+        pass
 
     def __str__(self) -> str:
         """Returns this NMEA group instance in it's string representation."""
@@ -250,47 +242,47 @@ class TagBlock:
     @property
     @error_if_uninitialized
     def receiver_timestamp(self) -> typing.Optional[str]:
-        return self._receiver_timestamp
+        pass
 
     @property
     @error_if_uninitialized
     def destination_station(self) -> typing.Optional[str]:
-        return self._destination_station
+        pass
 
     @property
     @error_if_uninitialized
     def line_count(self) -> typing.Optional[str]:
-        return self._line_count
+        pass
 
     @property
     @error_if_uninitialized
     def source_station(self) -> typing.Optional[str]:
-        return self._source_station
+        pass
 
     @property
     @error_if_uninitialized
     def relative_time(self) -> typing.Optional[str]:
-        return self._relative_time
+        pass
 
     @property
     @error_if_uninitialized
     def text(self) -> typing.Optional[str]:
-        return self._text
+        pass
 
     @property
     @error_if_uninitialized
     def is_valid(self) -> bool:
-        return self._is_valid
+        pass
 
     @property
     @error_if_uninitialized
     def actual_checksum(self) -> int:
-        return self._actual_checksum
+        pass
 
     @property
     @error_if_uninitialized
     def expected_checksum(self) -> int:
-        return self._expected_checksum
+        pass
 
     @property
     @error_if_uninitialized
@@ -349,7 +341,7 @@ class TagBlock:
     @classmethod
     def create_str(cls, **fields: Dict[str, object]) -> str:
         """The same as .create() but returns a string"""
-        return cls.create(**fields).decode()
+        pass
 
     def __repr__(self) -> str:
         if not self.initialized:
@@ -371,32 +363,7 @@ class TagBlock:
 
     def to_raw(self) -> bytes:
         """Convert a tag block to raw bytes"""
-        fields = []
-        if self._group is not None:
-            fields.append(f"g:{self._group}")
-        if self._source_station is not None:
-            fields.append(f"s:{self._source_station}")
-        if self._receiver_timestamp is not None:
-            fields.append(f"c:{self._receiver_timestamp}")
-        if self._destination_station is not None:
-            fields.append(f"d:{self._destination_station}")
-        if self._line_count is not None:
-            fields.append(f"n:{self._line_count}")
-        if self._relative_time is not None:
-            fields.append(f"r:{self._relative_time}")
-        if self._text is not None:
-            fields.append(f"t:{self._text}")
-
-        if not fields:
-            raise ValueError('can not convert empty tag block to bytes (forgot to call .init()?)')
-
-        payload_str = ','.join(fields)
-        payload = payload_str.encode()
-
-        chk_int = checksum(payload)
-        chk = f"{chk_int:02X}".encode()
-
-        return payload + ASTERISK + chk
+        pass
 
 
 class NMEASentence(object):
@@ -484,7 +451,7 @@ class NMEASentence(object):
 
     @property
     def talker(self) -> TalkerID:
-        return TalkerID(self.talker_id)
+        pass
 
 
 class GatehouseSentence(NMEASentence):
@@ -605,14 +572,11 @@ class AISSentence(NMEASentence):
         @param enum_as_int: Set to True to treat IntEnums as pure integers
         @return: A dictionary that holds all fields, defined in __slots__ + the decoded msg
         """
-        rlt = self.asdict()
-        decoded = self.decode()
-        rlt.update(decoded.asdict(enum_as_int))
-        return rlt
+        pass
 
     @classmethod
     def from_string(cls, nmea_str: str) -> "NMEAMessage":
-        return cls(nmea_str.encode('utf-8'))
+        pass
 
     @classmethod
     def from_bytes(cls, nmea_byte_str: bytes) -> "NMEAMessage":
@@ -647,15 +611,15 @@ class AISSentence(NMEASentence):
 
     @property
     def is_single(self) -> bool:
-        return not self.seq_id and self.frag_num == self.frag_cnt == 1
+        pass
 
     @property
     def is_multi(self) -> bool:
-        return not self.is_single
+        pass
 
     @property
     def fragment_count(self) -> int:
-        return self.frag_cnt
+        pass
 
     def decode(self) -> "ANY_MESSAGE":
         """
@@ -882,7 +846,7 @@ class Payload(abc.ABC):
         return data
 
     def to_json(self, ignore_spare: bool = True) -> str:
-        return AISJSONEncoder(indent=4).encode(self.asdict())
+        pass
 
 
 #
@@ -890,67 +854,55 @@ class Payload(abc.ABC):
 #
 
 def from_speed(v: typing.Union[int, float]) -> float:
-    return v * 10.0
+    pass
 
 
 def to_speed(v: typing.Union[int, float]) -> float:
-    return v / 10.0
+    pass
 
 
 def from_lat_lon(v: typing.Union[int, float]) -> float:
-    return round(float(v) * 600000.0)
+    pass
 
 
 def to_lat_lon(v: typing.Union[int, float]) -> float:
-    return round(float(v) / 600000.0, 6)
+    pass
 
 
 def from_lat_lon_600(v: typing.Union[int, float]) -> float:
-    return round(float(v) * 600.0)
+    pass
 
 
 def to_lat_lon_600(v: typing.Union[int, float]) -> float:
-    return round(float(v) / 600.0, 6)
+    pass
 
 
 def from_10th(v: typing.Union[int, float]) -> float:
-    return float(v) * 10.0
+    pass
 
 
 def to_10th(v: typing.Union[int, float]) -> float:
-    return v / 10.0
+    pass
 
 
 def from_100th(v: typing.Union[int, float]) -> float:
-    return float(v) * 100.0
+    pass
 
 
 def to_100th(v: typing.Union[int, float]) -> float:
-    return v / 100.0
+    pass
 
 
 def from_mmsi(v: typing.Union[str, int]) -> int:
-    return int(v)
+    pass
 
 
 def to_turn(turn: typing.Union[int, float]) -> typing.Union[float, TurnRate]:
-    if not turn:
-        return 0.0
-    elif abs(turn) == 127:
-        return TurnRate(turn)
-    elif abs(turn) == 128:
-        return TurnRate.NO_TI_DEFAULT
-
-    return math.copysign(round((turn / 4.733) ** 2), turn)
+    pass
 
 
 def from_turn(turn: typing.Optional[typing.Union[int, float, TurnRate]]) -> int:
-    if not turn:
-        return 0
-    elif abs(turn) == 127 or abs(turn) == 128:
-        return int(turn)
-
-    return int(math.copysign(round(4.733 * math.sqrt(abs(turn))), turn))
+    pass
 
 
 class CommunicationStateMixin:
@@ -971,53 +923,22 @@ class CommunicationStateMixin:
 
     def get_communication_state(self) -> Dict[str, typing.Optional[int]]:
         """Returns information used by the slot allocation algorithm as a dict."""
-        result: Dict[str, typing.Optional[int]] = {
-            'received_stations': None,
-            'slot_number': None,
-            'utc_hour': None,
-            'utc_minute': None,
-            'slot_offset': None,
-            'slot_timeout': None,
-            'sync_state': None,
-            'keep_flag': None,
-            'slot_increment': None,
-            'num_slots': None,
-        }
-
-        if self.is_sotdma:
-            result.update(get_sotdma_comm_state(self.communication_state_raw))
-        else:
-            result.update(get_itdma_comm_state(self.communication_state_raw))
-
-        return result
+        pass
 
     @property
     def is_sotdma(self) -> bool:
         """Messages of type 1, 2, 4, 11 use SOTDMA or 9, 18, 26 if 20th bit is set."""
-        if self.msg_type in self.SOTDMA_TYPES:
-            return True
-        if self.msg_type in self.SOTDMA_ITDMA_TYPES:
-            return self.radio <= self.MAX_COMM_STATE_VALUE
-        return False
+        pass
 
     @property
     def is_itdma(self) -> bool:
         """Messages of type 3 use ITDMA or 9, 18, 26 if 20th bit is set."""
-        if self.msg_type == 3:
-            return True
-        if self.msg_type in self.SOTDMA_ITDMA_TYPES:
-            return self.radio > self.MAX_COMM_STATE_VALUE
-        return False
+        pass
 
     @property
     def communication_state_raw(self) -> int:
         """Get the raw radio status except 20th bit - if present"""
-        try:
-            return self.radio & self.MAX_COMM_STATE_VALUE
-        except AttributeError as err:
-            raise ValueError(
-                'Communication State is only available for messages with radio field'
-            ) from err
+        pass
 
 
 @attr.s(slots=True)
@@ -1557,11 +1478,7 @@ class MessageType21(Payload):
         is full (has no trailing @ characters) the decoder should interpret
         the Name Extension field later in the message (no more than 14 6-bit
         characters) and concatenate it to this one to obtain the full name."""
-        if self.name:
-            if self.name_ext:
-                return f"{self.name}{self.name_ext}"
-            return str(self.name)
-        return ""
+        pass
 
 
 @attr.s(slots=True)
@@ -2028,7 +1945,7 @@ class MessageType28(Payload):
     @property
     def has_multiple_dimension_types(self) -> bool:
         """Whether this AtoN uses multiple dimension types for the same MMSI"""
-        return bool(self.dimension_additional_data == 1)
+        pass
 
 
 MSG_CLASS = {

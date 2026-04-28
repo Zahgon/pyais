@@ -71,10 +71,7 @@ class bit_vector:
 
     def get_bool(self, start: int) -> bool:
         """Return a single bit as a boolean."""
-        if start >= self._length:
-            return False
-        shift = self._length - start - 1
-        return bool((self._value >> shift) & 1)
+        pass
 
     def get_str(self, start: int, width: int) -> str:
         """Return a 6-bit-encoded AIS text string."""

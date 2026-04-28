@@ -42,7 +42,7 @@ class TalkerID(str, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: typing.Any) -> str:
-        return TalkerID.UNDEFINED
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["TalkerID"]:
@@ -69,7 +69,7 @@ class NavigationStatus(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return NavigationStatus.Undefined
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["NavigationStatus"]:
@@ -84,7 +84,7 @@ class ManeuverIndicator(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return ManeuverIndicator.UNDEFINED
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["ManeuverIndicator"]:
@@ -105,7 +105,7 @@ class EpfdType(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return EpfdType.Undefined
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["EpfdType"]:
@@ -184,29 +184,7 @@ class ShipType(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        if isinstance(value, int):
-            if 24 < value < 30:
-                return ShipType.WIG_Reserved
-
-            if 44 < value < 49:
-                return ShipType.HSC_Reserved
-
-            if 55 < value < 58:
-                return ShipType.SPARE
-
-            if 64 < value < 69:
-                return ShipType.Passenger_Reserved
-
-            if 74 < value < 79:
-                return ShipType.Cargo_Reserved
-
-            if 84 < value < 89:
-                return ShipType.Tanker_Reserved
-
-            if 94 < value < 99:
-                return ShipType.OtherType_Reserved
-
-        return ShipType.NotAvailable
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["ShipType"]:
@@ -287,7 +265,7 @@ class NavAid(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return NavAid.DEFAULT
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["NavAid"]:
@@ -302,7 +280,7 @@ class TransmitMode(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return TransmitMode.TXA_TXB_RXA_RXB
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["TransmitMode"]:
@@ -320,12 +298,7 @@ class StationType(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        if isinstance(value, int):
-            if 6 <= value <= 9:
-                return StationType.REGIONAL
-            if 10 <= value <= 15:
-                return StationType.RESERVED
-        return StationType.ALL
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["StationType"]:
@@ -348,7 +321,7 @@ class StationIntervals(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return StationIntervals.RESERVED
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["StationIntervals"]:
@@ -667,7 +640,7 @@ class InlandLoadedType(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return InlandLoadedType.NotAvailable
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["InlandLoadedType"]:
@@ -692,7 +665,7 @@ class AtoNSationType(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return AtoNSationType.RESERVED
+        pass
 
     @classmethod
     def from_value(cls, v: typing.Optional[typing.Any]) -> typing.Optional["AtoNSationType"]:
@@ -719,7 +692,7 @@ class AtoNDimensionType(int, ReprEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return AtoNSationType.RESERVED
+        pass
 
     @classmethod
     def from_value(cls, val: int) -> "AtoNDimensionType":

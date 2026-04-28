@@ -152,47 +152,7 @@ def get_num(num: int, start_bit: int, num_bits: int, total_bits: int, signed: bo
 
 def extract_bits(data: bytes, start_bit: int, num_bits: int, total_bit_length: int = -1, signed: bool = False) -> int:
     """bit extraction from bytes"""
-    if total_bit_length == -1:
-        total_bit_length = len(data) * 8
-
-    if num_bits == 0:
-        return 0
-
-    if start_bit >= total_bit_length:
-        return 0
-
-    # Limit extraction to available bits
-    available_bits = total_bit_length - start_bit
-    bits_to_read = min(num_bits, available_bits)
-
-    if bits_to_read == 0:
-        return 0
-
-    result = 0
-    bits_read = 0
-
-    while bits_read < bits_to_read:
-        byte_idx = (start_bit + bits_read) // 8
-        if byte_idx >= len(data):
-            break
-
-        bit_offset = (start_bit + bits_read) % 8
-        bits_in_byte = min(8 - bit_offset, bits_to_read - bits_read)
-
-        # Extract bits from current byte
-        mask = (1 << bits_in_byte) - 1
-        byte_value = (data[byte_idx] >> (8 - bit_offset - bits_in_byte)) & mask
-
-        result = (result << bits_in_byte) | byte_value
-        bits_read += bits_in_byte
-
-    # Handle signed interpretation
-    if signed and num_bits > 0:
-        sign_bit_mask = 1 << (num_bits - 1)
-        if result & sign_bit_mask:
-            result = result - (1 << num_bits)
-
-    return result
+    pass
 
 
 def chunks(sequence: typing.Sequence[T], n: int) -> Generator[typing.Sequence[T], None, None]:
@@ -212,39 +172,7 @@ def decode_bytes_as_ascii6(data: bytes, start_bit: int = 0, total_bits: int = -1
     Returns:
         ASCII String
     """
-    if total_bits == -1:
-        total_bits = len(data) * 8 - start_bit
-
-    string = ""
-    bit_pos = start_bit
-
-    while bit_pos < start_bit + total_bits:
-        # Calculate how many bits are available for this chunk
-        remaining_bits = (start_bit + total_bits) - bit_pos
-        chunk_bits = min(6, remaining_bits)
-
-        if chunk_bits == 0:
-            break
-
-        # Extract the 6-bit chunk (or less if at the end)
-        n = extract_bits(data, bit_pos, chunk_bits, signed=False)
-
-        # Handle incomplete chunks (less than 6 bits)
-        if chunk_bits < 6:
-            n <<= (6 - chunk_bits)  # Left-shift to align to 6-bit boundary
-
-        # Convert to ASCII character
-        if n < 0x20:
-            n += 0x40
-
-        # Break if there is an @ (ASCII 64)
-        if n == 64:
-            break
-
-        string += chr(n)
-        bit_pos += chunk_bits
-
-    return string.strip()
+    pass
 
 
 def checksum(sentence: bytes) -> int:
@@ -572,27 +500,7 @@ class ParsedDimensions:
     unit_b: str = ""
 
     def pretty(self) -> Dict[str, str]:
-        if self.dim_type == AtoNDimensionType.SWING_CIRCLE:
-            return {'radius': f'{float(self.value_a + self.value_b)}m'}
-        elif self.dim_type == AtoNDimensionType.AREA_CIRCLE:
-            return {'radius': f'{float(self.value_a + self.value_b)}m'}
-        elif self.dim_type == AtoNDimensionType.MOBILE_VECTOR:
-            cog = _COG_SPECIAL.get(self.raw_a)
-            if cog is None:
-                cog = f'{float(self.raw_a)}deg' if self.raw_a <= 359 else 'reserved'
-
-            if self.raw_b <= 59:
-                sog = f'{float(self.raw_b)}kn'
-            elif self.raw_b == 60:
-                sog = 'unreported'
-            else:
-                sog = 'reserved'
-            return {'cog': cog, 'sog': sog}
-        else:
-            return {
-                self.label_a: f"{self.value_a}{self.unit_a}",
-                self.label_b: f"{self.value_b}{self.unit_b}"
-            }
+        pass
 
 
 def parse_dimensions(dim_type: int, raw_a: int, raw_b: int) -> ParsedDimensions:

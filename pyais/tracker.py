@@ -13,7 +13,7 @@ from pyais.messages import ANY_MESSAGE, AISSentence
 
 def now() -> float:
     """Current time as UNIX time (milliseconds)"""
-    return time.time()
+    pass
 
 
 class AISTrackEvent(Enum):
@@ -30,21 +30,15 @@ class AISUpdateBroker:
 
     def attach(self, event: AISTrackEvent, callback: typing.Any) -> None:
         """Attach a new subscriber"""
-        if callback not in self._callbacks:
-            self._callbacks.append((event, callback))
+        pass
 
     def detach(self, event: AISTrackEvent, callback: typing.Any) -> None:
         """Detach a subscriber"""
-        try:
-            self._callbacks.remove((event, callback))
-        except ValueError:
-            pass
+        pass
 
     def propagate(self, track: 'AISTrack', event: AISTrackEvent) -> None:
         """Propagate a track event"""
-        for destination, callback in self._callbacks:
-            if event == destination:
-                callback(track)
+        pass
 
 
 @dataclasses.dataclass(eq=True, order=True)
@@ -86,30 +80,14 @@ def msg_to_track(msg: ANY_MESSAGE, ts_epoch_ms: typing.Optional[float] = None) -
     ts_epoch_ms can be used as a timestamp for when the message was initially received.
     :param msg:         any decoded AIS message of type AISMessage.
     :param ts_epoch_ms: optional timestamp for the message. If None (default) current time is used."""
-    if ts_epoch_ms is None:
-        track = AISTrack(mmsi=msg.mmsi)
-    else:
-        track = AISTrack(mmsi=msg.mmsi, last_updated=ts_epoch_ms)
-
-    for field in FIELDS:
-        if not hasattr(msg, field.name):
-            continue
-        val = getattr(msg, field.name)
-        if val is not None:
-            setattr(track, field.name, val)
-
-    return track
+    pass
 
 
 def update_track(old: AISTrack, new: AISTrack) -> AISTrack:
     """Updates all fields of old with the values of new.
     :param old: the old AISTrack to update.
     :param new: the new AISTrack to update old with."""
-    for field in FIELDS:
-        new_val = getattr(new, field.name)
-        if new_val is not None:
-            setattr(old, field.name, new_val)
-    return old
+    pass
 
 
 def poplast(dictionary: typing.Dict[typing.Any, typing.Any]) -> typing.Any:
@@ -159,40 +137,30 @@ class AISTracker:
         return None
 
     def __set_oldest_timestamp(self, ts: float) -> None:
-        if self.oldest_timestamp is None:
-            self.oldest_timestamp = ts
-        else:
-            self.oldest_timestamp = min(self.oldest_timestamp, ts)
+        pass
 
     def _tracks_ordered_after_insertion(
         self
     ) -> typing.Union[typing.List[AISTrack], typing.Iterable[AISTrack]]:
-        tracks: typing.Union[typing.List[AISTrack], typing.Iterable[AISTrack]]
-        if self.stream_is_ordered:
-            # From Python3.7 keys are ordered after insertion in dicts.
-            # No need to sort.
-            tracks = self._tracks.values()
-        else:
-            tracks = reversed(sorted(self._tracks.values(), key=lambda track: track.last_updated))
-        return tracks
+        pass
 
     @property
     def tracks(self) -> typing.List[AISTrack]:
         """Returns a list of all known tracks."""
-        return list(self._tracks.values())
+        pass
 
     def register_callback(
         self, event: AISTrackEvent, callback: typing.Callable[[AISTrack], typing.Any]
     ) -> None:
         """Register a callback that is called every time a specific event happens.
         The callback should be function that takes an AISTrack as a single argument."""
-        self._broker.attach(event, callback)
+        pass
 
     def remove_callback(
         self, event: AISTrackEvent, callback: typing.Callable[[AISTrack], typing.Any]
     ) -> None:
         """Remove a callback. Every callback is identified by its event and callback-function."""
-        self._broker.detach(event, callback)
+        pass
 
     def update(self, msg: typing.Union[AISSentence, ANY_MESSAGE], ts_epoch_ms: typing.Optional[float] = None) -> None:
         """Updates a track. If the track does not yet exist, a new track is created.
@@ -200,109 +168,37 @@ class AISTracker:
 
         :param msg: the message to add to the track.
         :param ts_epoch_ms: an optional timestamp to tell when the message was originally received."""
-        if isinstance(msg, AISSentence):
-            msg = msg.decode()
-
-        mmsi = int(msg.mmsi)
-        track = msg_to_track(msg, ts_epoch_ms)
-        self.ensure_timestamp_constraints(track.last_updated)
-        self.insert_or_update(mmsi, track)
-        self.cleanup()
+        pass
 
     def ensure_timestamp_constraints(self, ts_epoch_ms: float) -> None:
         """Ensures that tracks are ordered. Only relevant is stream_is_ordered is True."""
-        if not self.stream_is_ordered or not self._tracks:
-            return
-
-        # Get the newest track
-        latest = poplast(self._tracks)
-
-        if ts_epoch_ms < latest.last_updated:
-            # The new track must be inserted after the latest one.
-            raise ValueError(
-                'can not insert an older timestamp in a ordered stream.'
-                f' {ts_epoch_ms} < {latest.last_updated}.'
-                ' consider setting stream_is_ordered to False.'
-            )
+        pass
 
     def get_track(self, mmsi: typing.Union[str, int]) -> typing.Optional[AISTrack]:
         """Get a track by mmsi. Returns None if the track does not exist."""
-        try:
-            return self._tracks[int(mmsi)]
-        except KeyError:
-            return None
+        pass
 
     def pop_track(self, mmsi: typing.Union[str, int]) -> typing.Optional[AISTrack]:
         """Pop a track by mmsi. Returns the track and deletes it, if it exist. Otherwise returns None."""
-        try:
-            mmsi = int(mmsi)
-            track = self._tracks[mmsi]
-            del self._tracks[mmsi]
-            self._broker.propagate(track, AISTrackEvent.DELETED)
-            return track
-        except KeyError:
-            return None
+        pass
 
     def n_latest_tracks(self, n: int) -> typing.List[AISTrack]:
         """Return the latest N tracks. These are the tracks with the youngest timestamps.
         E.g. the tracks that were updated most recently."""
-        n_latest = []
-        n = min(n, len(self._tracks))
-
-        tracks = self._tracks_ordered_after_insertion()
-
-        for i, track in enumerate(tracks):
-            if n <= i:
-                break
-            n_latest.append(track)
-
-        return n_latest
+        pass
 
     def insert_or_update(self, mmsi: int, track: AISTrack) -> None:
         """Insert or update a track."""
-        # Does the track already exist?
-        if mmsi in self._tracks:
-            self.update_track(mmsi, track)
-        else:
-            self.insert_track(mmsi, track)
-        self.__set_oldest_timestamp(track.last_updated)
+        pass
 
     def insert_track(self, mmsi: int, new: AISTrack) -> None:
         """Creates a new track records in memory"""
-        self._tracks[mmsi] = new
-        self._broker.propagate(new, AISTrackEvent.CREATED)
+        pass
 
     def update_track(self, mmsi: int, new: AISTrack) -> None:
         """Updates an existing track in memory"""
-        old = self._tracks[mmsi]
-        if new.last_updated < old.last_updated:
-            raise ValueError('cannot update track with older message')
-
-        updated = update_track(old, new)
-        # Neat little trick to keep tracks ordered after timestamp
-        del self._tracks[mmsi]
-        self._tracks[mmsi] = updated
-        self._broker.propagate(updated, AISTrackEvent.UPDATED)
+        pass
 
     def cleanup(self) -> None:
         """Delete all records whose last update is older than ttl."""
-        if self.ttl_in_seconds is None or self.oldest_timestamp is None:
-            return
-
-        t = now()
-        # the oldest track is still younger than the ttl
-        if (t - self.ttl_in_seconds) < self.oldest_timestamp:
-            return
-
-        to_be_deleted = set()
-        tracks = self._tracks_ordered_after_insertion()
-
-        for track in tracks:
-            if (t - track.last_updated) < self.ttl_in_seconds:
-                self.oldest_timestamp = track.last_updated
-                break
-            # ttl is over. delete it.
-            to_be_deleted.add(track.mmsi)
-
-        for mmsi in to_be_deleted:
-            self.pop_track(mmsi)
+        pass

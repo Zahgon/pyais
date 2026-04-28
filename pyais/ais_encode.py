@@ -77,7 +77,7 @@ class AISJSONDecoder(json.JSONDecoder):
 
     def _filter_hook(self, obj: Any) -> dict[str, Any]:
         """Remove unknown keys from decoded objects"""
-        return {k: v for k, v in obj.items() if k in KNOWN_FIELDS}
+        pass
 
 
 def create_parser() -> argparse.ArgumentParser:

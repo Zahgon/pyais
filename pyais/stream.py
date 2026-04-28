@@ -215,20 +215,7 @@ class IterMessages(AssembleMessages):
     def from_strings(cls, messages: Iterable[str], ignore_encoding_errors: bool = False,
                      encoding: str = "utf-8") -> "IterMessages":
         # If the users passes a single message as string, make it a list
-        if isinstance(messages, str):
-            messages = [messages, ]
-
-        encoded: List[bytes] = []
-        for message in messages:
-            try:
-                encoded.append(message.encode(encoding))
-            except UnicodeEncodeError as e:
-                if ignore_encoding_errors:
-                    # Just skip and carry on
-                    continue
-                raise e
-
-        return IterMessages(encoded)
+        pass
 
     def _iter_messages(self) -> Generator[bytes, None, None]:
         # Transform self.messages into a generator

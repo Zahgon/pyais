@@ -34,4 +34,4 @@ class AISType(IntEnum):
 
     @classmethod
     def _missing_(cls, value: object) -> int:
-        return AISType.NOT_IMPLEMENTED
+        pass

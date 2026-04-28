@@ -31,56 +31,8 @@ class NMEAQueue(queue.Queue[AISSentence]):
 
     def put_line(self, line: bytes, block: bool = True, timeout: typing.Optional[float] = None) -> None:
         """Put a line of raw bytes, as part of an NMEA sentence, into the queue."""
-        try:
-            sentence = NMEASentenceFactory.produce(line)
-            self.__add_to_tbq(sentence)
-            if sentence.TYPE == GatehouseSentence.TYPE:
-                # Remember gatehouse wrappers for the next AIS message
-                sentence = typing.cast(GatehouseSentence, sentence)
-                self.last_wrapper = sentence
-                return None
-        except (InvalidNMEAMessageException, UnknownMessageException, IndexError):
-            # Be gentle and just skip invalid messages
-            return None
-
-        if not sentence.TYPE == AISSentence.TYPE:
-            return None
-
-        sentence = typing.cast(AISSentence, sentence)
-
-        if sentence.is_single:
-            if self.last_wrapper:
-                # Check if there was a wrapper message right before this line
-                sentence.wrapper_msg = self.last_wrapper
-                self.last_wrapper = None
-            super().put(sentence, block, timeout)
-        else:
-            # Instead of None use -1 as a seq_id
-            seq_id = sentence.seq_id
-            if seq_id is None:
-                seq_id = -1
-
-            # seq_id and channel make a unique stream
-            slot = (seq_id, sentence.channel)
-
-            if slot not in self.buffer:
-                # Create a new array in the buffer that has enough space for all fragments
-                self.buffer[slot] = [None, ] * max(sentence.fragment_count, 0xff)
-
-            self.buffer[slot][sentence.frag_num - 1] = sentence
-            msg_parts = self.buffer[slot][0:sentence.fragment_count]
-
-            # Check if all fragments are found
-            not_none_parts = [m for m in msg_parts if m is not None]
-            if len(not_none_parts) == sentence.fragment_count:
-                # Assemble the full message and clear the buffer
-                full = AISSentence.assemble_from_iterable(not_none_parts)
-                del self.buffer[slot]
-                super().put(full, block, timeout)
+        pass
 
     def get_or_none(self) -> typing.Optional[NMEASentence]:
         """Non-blocking helper method to retrieve the last message, if one is available"""
-        try:
-            return self.get(block=False)
-        except queue.Empty:
-            return None
+        pass
